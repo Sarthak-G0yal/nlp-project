@@ -19,4 +19,5 @@ This folder contains structured project documentation for the CoNLL-2000 shallow
 5. `03_implementation/02_notebook_pipeline.md`
 6. `04_results/01_baseline_results.md`
 7. `04_results/02_transformer_results.md`
-8. `05_conclusion/01_conclusions.md`
+8. `04_results/04_notebook_results_summary.md`
+9. `05_conclusion/01_conclusions.md`
