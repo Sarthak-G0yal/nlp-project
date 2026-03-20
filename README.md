@@ -79,3 +79,10 @@ uv add scikit-learn datasets transformers evaluate seqeval torch matplotlib seab
 - Baseline and transformer model comparison (Precision/Recall/F1)
 - Error slices by chunk class (for example NP vs VP boundaries)
 - Project summary on practical IE takeaways from shallow parsing
+
+
+## Next Steps:
+- compare models that are used till now ( baseline and all transformer) compare on all metrics.
+- Implement other models or methods.
+- implement a application of shallow pharsing for IE etc.
+- use even bigger transformer model and see if the extra compute justify the gains
