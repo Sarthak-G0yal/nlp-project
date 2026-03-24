@@ -12,6 +12,7 @@ This folder contains structured project documentation for the CoNLL-2000 shallow
 
 ## Recommended Reading Order
 
+0. `dashboard.html` (presentation dashboard)
 1. `01_project/01_overview.md`
 2. `01_project/02_problem_statement.md`
 3. `02_research/01_field_background.md`

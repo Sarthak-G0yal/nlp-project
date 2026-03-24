@@ -33,6 +33,7 @@ This is important for converting model output into business- or task-level value
 4. Run event-style filtering using a finance/news verb list.
 5. Produce phrase analytics charts for top subjects and actions.
 6. Optionally run custom inference from the trained transformer checkpoint.
+7. Run an email event extraction pipeline from pasted email text.
 
 ## Core Heuristics Used
 
@@ -67,12 +68,52 @@ the notebook can produce a structured IE view with chunk-based labels and fields
 - object: `a major acquisition`
 - prep_phrases: `in Europe`
 
+## New: Paste-Email Event Pipeline
+
+The notebook now includes a dedicated section that lets you paste an email body and extract structured event rows.
+
+### Input
+
+- Free-form email text (multi-line), pasted into `email_text`.
+
+### Processing Steps
+
+1. Load or reuse the trained chunking pipeline checkpoint.
+2. Split email content into candidate sentences (with basic header cleanup such as `Subject:`).
+3. Predict chunk tags for each sentence.
+4. Convert chunk outputs into IE tuples (subject/action/object).
+5. Add event-level fields with lightweight heuristics:
+  - event type
+  - location phrase
+  - time phrase
+
+### Output Schema
+
+The extracted DataFrame includes:
+
+- `sentence`
+- `event_type`
+- `trigger`
+- `subject`
+- `object`
+- `location`
+- `time`
+- `num_chunks`
+
+### Typical Use
+
+1. Open `Shallow_Parsing_IE_Application.ipynb`.
+2. Go to the email extraction section.
+3. Replace the sample `email_text` with your own email content.
+4. Run the cell to get structured event records ready for downstream triage, alerts, or reporting.
+
 ## Limitations
 
 - Rule-based subject/object extraction can fail on complex syntax.
 - No coreference resolution (pronouns are unresolved).
 - Event filtering relies on a hand-built verb list.
 - For production use, chunking should be combined with NER and relation extraction.
+- Location/time detection currently uses lightweight patterns and should be upgraded with dedicated temporal and geolocation models for higher precision.
 
 ## Suggested Extensions
 
