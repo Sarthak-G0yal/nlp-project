@@ -207,7 +207,7 @@
 
     <section class="grid">
       <article class="card">
-        <div class="kpi">4</div>
+        <div class="kpi">5</div>
         <div class="kpi-note">Main notebooks delivered</div>
       </article>
       <article class="card">
@@ -219,8 +219,8 @@
         <div class="kpi-note">Main gain vs baseline (chunk F1)</div>
       </article>
       <article class="card">
-        <div class="kpi">3</div>
-        <div class="kpi-note">Email events extracted in demo run</div>
+        <div class="kpi">5 / 5</div>
+        <div class="kpi-note">Bridge notebook accepted events</div>
       </article>
     </section>
 
@@ -254,6 +254,51 @@
             <td class="mono">Shallow_Parsing_IE_Application.ipynb</td>
             <td>Application layer: tuple extraction, event detection, analytics, paste-email pipeline.</td>
             <td>Extracted structured event, location, and time records from email text.</td>
+          </tr>
+          <tr>
+            <td class="mono">ipynb/Chunk_to_Event_Cost_Aware_Bridge.ipynb</td>
+            <td>Chunk-to-event conversion with confidence/abstention and cost-aware routing.</td>
+            <td>Recommendation policy + pending tiny model tracking + per-email cost summary.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>Chunk-to-Event Bridge (New)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Signal</th>
+            <th>Current Result</th>
+            <th>Interpretation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Measured model profile</td>
+            <td>distilbert, bert-base-uncased, roberta-base</td>
+            <td>Bridge notebook reuses validated chunk model quality/cost data.</td>
+          </tr>
+          <tr>
+            <td>Quality-first recommendation</td>
+            <td>roberta-base</td>
+            <td>Highest feasible quality under current thresholds.</td>
+          </tr>
+          <tr>
+            <td>Latency-first recommendation</td>
+            <td>roberta-base</td>
+            <td>Same feasible candidate under current gain/time constraints.</td>
+          </tr>
+          <tr>
+            <td>Tiny model state</td>
+            <td>3 models marked pending_evaluation</td>
+            <td>Pipeline handles partial evaluation state without breaking recommendations.</td>
+          </tr>
+          <tr>
+            <td>Email event run output</td>
+            <td>accepted events 5/5, total cost 38.00, cost/event 7.60</td>
+            <td>End-to-end chunk-to-event flow works with confidence and cost fields.</td>
           </tr>
         </tbody>
       </table>
@@ -515,6 +560,14 @@
           <tr>
             <td><a href="03_implementation/05_ie_application_notebook.md">03_implementation/05_ie_application_notebook.md</a></td>
             <td>Application and email pipeline details.</td>
+          </tr>
+          <tr>
+            <td><a href="03_implementation/06_chunk_to_event_bridge.md">03_implementation/06_chunk_to_event_bridge.md</a></td>
+            <td>Chunk-to-event architecture, confidence, and routing implementation.</td>
+          </tr>
+          <tr>
+            <td><a href="04_results/06_chunk_to_event_bridge_results.md">04_results/06_chunk_to_event_bridge_results.md</a></td>
+            <td>Executed bridge notebook results and current recommendation outputs.</td>
           </tr>
           <tr>
             <td><a href="05_conclusion/01_conclusions.md">05_conclusion/01_conclusions.md</a></td>

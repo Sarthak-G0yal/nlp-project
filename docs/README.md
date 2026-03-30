@@ -6,8 +6,8 @@ This folder contains structured project documentation for the CoNLL-2000 shallow
 
 - `01_project/`: project context, goals, and motivation
 - `02_research/`: research landscape and related work
-- `03_implementation/`: what was built and why
-- `04_results/`: baseline, transformer, and scaling-study outcomes
+- `03_implementation/`: what was built and why (including event-bridge implementation)
+- `04_results/`: baseline, transformer, scaling-study, and event-bridge outcomes
 - `05_conclusion/`: conclusions and next steps
 
 ## Recommended Reading Order
@@ -19,8 +19,10 @@ This folder contains structured project documentation for the CoNLL-2000 shallow
 4. `02_research/02_recent_work.md`
 5. `03_implementation/02_notebook_pipeline.md`
 6. `03_implementation/05_ie_application_notebook.md`
-7. `04_results/01_baseline_results.md`
-8. `04_results/02_transformer_results.md`
-9. `04_results/04_notebook_results_summary.md`
-10. `04_results/05_larger_transformer_comparison.md`
-11. `05_conclusion/01_conclusions.md`
+7. `03_implementation/06_chunk_to_event_bridge.md`
+8. `04_results/01_baseline_results.md`
+9. `04_results/02_transformer_results.md`
+10. `04_results/04_notebook_results_summary.md`
+11. `04_results/05_larger_transformer_comparison.md`
+12. `04_results/06_chunk_to_event_bridge_results.md`
+13. `05_conclusion/01_conclusions.md`
