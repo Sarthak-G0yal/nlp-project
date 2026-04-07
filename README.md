@@ -80,6 +80,29 @@ uv add scikit-learn datasets transformers evaluate seqeval torch matplotlib seab
 - Error slices by chunk class (for example NP vs VP boundaries)
 - Project summary on practical IE takeaways from shallow parsing
 
+## 6) Streamlit Dashboard (Separate Library)
+
+An interactive dashboard is available in:
+
+- `libs/chunk_event_dashboard/app.py`
+
+It supports:
+
+- model checkpoint selection from local `outputs/`
+- single text chunk-to-event extraction
+- email event pipeline with confidence and cost summary
+
+Run from repository root:
+
+```bash
+uv sync
+uv run streamlit run libs/chunk_event_dashboard/app.py --global.dataFrameSerialization legacy
+```
+
+For implementation details and troubleshooting, see:
+
+- `docs/03_implementation/07_streamlit_dashboard.md`
+
 
 ## Next Steps:
 - compare models that are used till now ( baseline and all transformer) compare on all metrics.

@@ -53,3 +53,22 @@ Fix:
 
 - removed notebook progress callback prior to evaluation
 - added logic to skip retraining if the trainer already has a trained state
+
+## Issue 6: Streamlit + Pandas/PyArrow Compatibility
+
+Error symptoms:
+
+- `Error: Unrecognized type: "LargeUtf8" (20)` in Streamlit frontend tables
+- `NotImplementedError: Dtype str not understood.` from Streamlit legacy chart marshalling
+
+Fix:
+
+- enabled legacy dataframe serialization in `libs/chunk_event_dashboard/.streamlit/config.toml`:
+	- `[global] dataFrameSerialization = "legacy"`
+- added dataframe compatibility casting in app code to convert string-extension columns to `object`
+- replaced `st.bar_chart(...)` with a matplotlib chart (`st.pyplot`) to avoid legacy dtype marshalling issues
+
+Outcome:
+
+- dashboard renders checkpoint tables and model profile tables without `LargeUtf8` decode failures
+- event-type distribution chart renders without `Dtype str not understood` exceptions
