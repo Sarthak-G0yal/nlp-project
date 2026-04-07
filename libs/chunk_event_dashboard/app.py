@@ -169,7 +169,9 @@ Anita"""
                 # Matplotlib avoids legacy Streamlit dataframe marshalling issues on pandas string dtypes.
                 import matplotlib.pyplot as plt
 
-                fig, ax = plt.subplots(figsize=(6, 3))
+                plt.style.use("ggplot")
+
+                fig, ax = plt.subplots(figsize=(6, 4))
                 ax.bar(event_counts.index.astype(str).tolist(), event_counts.values.tolist())
                 ax.set_xlabel("event_type")
                 ax.set_ylabel("count")
