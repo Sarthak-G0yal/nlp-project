@@ -20,7 +20,7 @@ Information extraction systems often need phrase boundaries to:
 
 Given a token sequence and corresponding POS tags, predict one chunk label per token from the CoNLL-2000 label set.
 
-We evaluate with:
+I evaluate with:
 
 - token-level precision/recall/F1
 - chunk-level seqeval metrics

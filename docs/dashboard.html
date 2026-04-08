@@ -207,12 +207,12 @@
 
     <section class="grid">
       <article class="card">
-        <div class="kpi">5</div>
+        <div class="kpi">6</div>
         <div class="kpi-note">Main notebooks delivered</div>
       </article>
       <article class="card">
-        <div class="kpi">0.9665</div>
-        <div class="kpi-note">Best chunk F1 (RoBERTa-base)</div>
+        <div class="kpi">0.9602</div>
+        <div class="kpi-note">Best measured chunk F1 in latest scaling run (BERT-base)</div>
       </article>
       <article class="card">
         <div class="kpi">+0.2898</div>
@@ -247,8 +247,13 @@
           </tr>
           <tr>
             <td class="mono">Larger_Transformer_Comparison.ipynb</td>
-            <td>Compute-vs-gain scaling study (DistilBERT, BERT-base, RoBERTa-base).</td>
-            <td>RoBERTa gains quality; DistilBERT remains efficiency baseline.</td>
+            <td>Compute-vs-gain scaling study (DistilBERT, BERT-base, RoBERTa-base + tiny-model candidates).</td>
+            <td>TinyBERT and NanoBERT-like measured; RoBERTa OOM and bert-tiny dependency issue in latest run.</td>
+          </tr>
+          <tr>
+            <td class="mono">Domain_Specific_Tokenization_Chunk_Aware_Preprocessing.ipynb</td>
+            <td>Innovation notebook for domain normalization, alignment-aware scoring, and retraining decision gates.</td>
+            <td>Best sweep run reached +0.0020 F1 over baseline, below +0.005 deployment threshold.</td>
           </tr>
           <tr>
             <td class="mono">Shallow_Parsing_IE_Application.ipynb</td>
@@ -258,7 +263,7 @@
           <tr>
             <td class="mono">ipynb/Chunk_to_Event_Cost_Aware_Bridge.ipynb</td>
             <td>Chunk-to-event conversion with confidence/abstention and cost-aware routing.</td>
-            <td>Recommendation policy + pending tiny model tracking + per-email cost summary.</td>
+            <td>Recommendation policy + profile snapshot (needs sync with newest scaling run) + per-email cost summary.</td>
           </tr>
         </tbody>
       </table>
@@ -292,8 +297,8 @@
           </tr>
           <tr>
             <td>Tiny model state</td>
-            <td>3 models marked pending_evaluation</td>
-            <td>Pipeline handles partial evaluation state without breaking recommendations.</td>
+            <td>Scaling now measured 2 tiny models; bridge table still pending until rerun</td>
+            <td>Bridge pipeline remains stable while model-profile snapshots are refreshed incrementally.</td>
           </tr>
           <tr>
             <td>Email event run output</td>
@@ -358,9 +363,9 @@
             <div>0.9586</div>
           </div>
           <div class="bar-row">
-            <div>RoBERTa-base</div>
-            <div class="track"><div class="fill fill-c" style="width:96.65%"></div></div>
-            <div>0.9665</div>
+            <div>BERT-base (latest scaling run)</div>
+            <div class="track"><div class="fill fill-c" style="width:96.02%"></div></div>
+            <div>0.9602</div>
           </div>
         </div>
       </article>
@@ -434,8 +439,8 @@
           <tr>
             <td>distilbert-base-uncased</td>
             <td>66.3806</td>
-            <td>120.0704</td>
-            <td>0.9566</td>
+            <td>120.0361</td>
+            <td>0.9563</td>
             <td>-</td>
             <td>1.0000x</td>
             <td>Efficiency baseline</td>
@@ -443,26 +448,93 @@
           <tr>
             <td>bert-base-uncased</td>
             <td>108.9093</td>
-            <td>222.7203</td>
+            <td>223.8648</td>
             <td>0.9602</td>
-            <td class="delta-mid">+0.0036</td>
-            <td>1.8549x</td>
-            <td>Gain too small for cost</td>
+            <td class="delta-mid">+0.0039</td>
+            <td>1.8650x</td>
+            <td>Highest measured F1, but below gain threshold</td>
           </tr>
           <tr>
             <td>roberta-base</td>
             <td>124.0727</td>
-            <td>224.6860</td>
-            <td><strong>0.9665</strong></td>
-            <td class="delta-good">+0.0099</td>
-            <td>1.8713x</td>
-            <td>Worth considering if budget allows</td>
+            <td>failed</td>
+            <td>failed</td>
+            <td>failed</td>
+            <td>failed</td>
+            <td>CUDA OOM in latest execution environment</td>
+          </tr>
+          <tr>
+            <td>google/bert_uncased_L-2_H-128_A-2</td>
+            <td>4.3724</td>
+            <td>17.1686</td>
+            <td>0.7405</td>
+            <td class="delta-mid">-0.2158</td>
+            <td>0.1430x</td>
+            <td>Very fast, but large quality drop</td>
+          </tr>
+          <tr>
+            <td>prajjwal1/bert-tiny</td>
+            <td>failed</td>
+            <td>failed</td>
+            <td>failed</td>
+            <td>failed</td>
+            <td>failed</td>
+            <td>Tokenizer backend dependency issue (needs sentencepiece or tiktoken)</td>
+          </tr>
+          <tr>
+            <td>huawei-noah/TinyBERT_General_4L_312D</td>
+            <td>14.2598</td>
+            <td>32.7503</td>
+            <td>0.8806</td>
+            <td class="delta-mid">-0.0757</td>
+            <td>0.2728x</td>
+            <td>Fast and compact, but noticeably lower quality</td>
           </tr>
         </tbody>
       </table>
       <p style="margin-top:10px;">
         Rule used: minimum meaningful F1 gain <span class="mono">0.005</span>, max time multiplier <span class="mono">2.0x</span>.
       </p>
+    </section>
+
+    <section class="section">
+      <h2>Innovation Notebook: Domain-Specific Preprocessing</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Signal</th>
+            <th>Current Result</th>
+            <th>Interpretation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ablation best variant</td>
+            <td>baseline and tokenization_plus_bio tie at chunk F1 0.9562</td>
+            <td>Preprocessing did not beat baseline quality in this run.</td>
+          </tr>
+          <tr>
+            <td>Alignment evaluable coverage</td>
+            <td>0.948 to 0.984 across variants</td>
+            <td>Alignment-aware scoring substantially improved measurement reliability.</td>
+          </tr>
+          <tr>
+            <td>Single retrain run</td>
+            <td>chunk F1 0.8823</td>
+            <td>Underperformed baseline and was rejected.</td>
+          </tr>
+          <tr>
+            <td>Iterative sweep best trial</td>
+            <td>norm_off_e3_lr2e5_full at chunk F1 0.9582 (+0.0020)</td>
+            <td>Improved over baseline, but below +0.005 deployment threshold.</td>
+          </tr>
+          <tr>
+            <td>Deployment decision</td>
+            <td>deploy_retrained_model = False</td>
+            <td>Innovation workflow is useful, but baseline remains production choice for now.</td>
+          </tr>
+        </tbody>
+      </table>
     </section>
 
     <section class="section two-col">
@@ -552,6 +624,10 @@
           <tr>
             <td><a href="04_results/04_notebook_results_summary.md">04_results/04_notebook_results_summary.md</a></td>
             <td>Cross-notebook baseline and comparison summary.</td>
+          </tr>
+          <tr>
+            <td><a href="04_results/07_domain_specific_tokenization_innovation.md">04_results/07_domain_specific_tokenization_innovation.md</a></td>
+            <td>Domain-specific preprocessing innovation, retraining sweep, and deployment-gate outcomes.</td>
           </tr>
           <tr>
             <td><a href="04_results/05_larger_transformer_comparison.md">04_results/05_larger_transformer_comparison.md</a></td>

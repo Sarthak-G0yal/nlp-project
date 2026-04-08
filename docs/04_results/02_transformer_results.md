@@ -11,8 +11,25 @@
 ## Baseline vs Transformer
 
 - Baseline chunk-F1: 0.6688
-- Transformer chunk-F1: 0.9588
-- Absolute gain: 0.2900 F1
+- Transformer chunk-F1: 0.9586
+- Absolute gain: 0.2898 F1
+
+## Transformer vs Other Baselines
+
+Direct chunk-level comparison against models reported in `ipynb/Other_Shallow_Parsing_Baselines.ipynb`:
+
+- Transformer (DistilBERT): chunk_f1 0.9586
+- CRF (optional): chunk_f1 0.9307 (gap: 0.0279)
+- LogisticRegression: chunk_f1 0.8975 (gap: 0.0611)
+- MultinomialNB: chunk_f1 0.8726 (gap: 0.0860)
+- BiLSTM: chunk_f1 0.8025 (gap: 0.1561)
+
+Relative error reduction from transformer over each baseline:
+
+- vs CRF: 40.3%
+- vs LogisticRegression: 59.6%
+- vs MultinomialNB: 67.5%
+- vs BiLSTM: 79.0%
 
 ## Analysis
 

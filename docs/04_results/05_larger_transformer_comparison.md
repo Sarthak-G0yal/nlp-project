@@ -2,44 +2,66 @@
 
 ## Objective
 
-This experiment measured whether moving from a compact transformer (DistilBERT) to larger encoders (BERT-base, RoBERTa-base) provides enough chunking quality gain to justify extra training cost.
+This experiment measured whether moving from a compact transformer (DistilBERT) to larger encoders (BERT-base, RoBERTa-base) provides enough chunking quality gain to justify extra training cost, while also testing compact tiny-model candidates.
 
 Notebook used: Larger_Transformer_Comparison.ipynb
 
-## What We Did
+## What I Did
 
 1. Loaded CoNLL-2000 train and test splits from parquet.
 2. Trained token-classification models with the same pipeline and metric function (seqeval chunk metrics).
-3. Compared three encoders:
+3. Compared the primary measured encoders:
    - distilbert/distilbert-base-uncased
    - bert-base-uncased
    - roberta-base
-4. Used identical run configuration for fairness:
+4. Added lightweight candidates in config for extended scaling:
+   - google/bert_uncased_L-2_H-128_A-2 (NanoBERT-like)
+   - prajjwal1/bert-tiny
+   - huawei-noah/TinyBERT_General_4L_312D
+5. Used identical run configuration for fairness:
    - train samples: 8937
    - test samples: 2013
    - epochs: 2
    - batch size: 16 (train/eval)
    - learning rate: 2e-5
-5. Computed cost/benefit analysis relative to DistilBERT baseline:
+6. Computed cost/benefit analysis relative to DistilBERT baseline:
    - absolute F1 gain
    - training-time multiplier
    - parameter-count multiplier
    - gain per extra training hour
 
+## Expanded Candidate Pool (Current State)
+
+| Model | Status |
+| --- | --- |
+| distilbert/distilbert-base-uncased | measured |
+| bert-base-uncased | measured |
+| roberta-base | failed (CUDA OOM in this run) |
+| google/bert_uncased_L-2_H-128_A-2 | measured |
+| prajjwal1/bert-tiny | failed (tokenizer backend dependency) |
+| huawei-noah/TinyBERT_General_4L_312D | measured |
+
 ## Results
 
 | Model | Params (M) | Train Time (s) | Chunk F1 | Precision | Recall | Accuracy |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| roberta-base | 124.0727 | 224.6860 | 0.9665 | 0.9654 | 0.9675 | 0.9780 |
-| bert-base-uncased | 108.9093 | 222.7203 | 0.9602 | 0.9582 | 0.9622 | 0.9751 |
-| distilbert/distilbert-base-uncased | 66.3806 | 120.0704 | 0.9566 | 0.9534 | 0.9598 | 0.9730 |
+| bert-base-uncased | 108.9093 | 223.8648 | 0.9602 | 0.9582 | 0.9622 | 0.9751 |
+| distilbert/distilbert-base-uncased | 66.3806 | 120.0361 | 0.9563 | 0.9531 | 0.9596 | 0.9727 |
+| huawei-noah/TinyBERT_General_4L_312D | 14.2598 | 32.7503 | 0.8806 | 0.8750 | 0.8863 | 0.9339 |
+| google/bert_uncased_L-2_H-128_A-2 | 4.3724 | 17.1686 | 0.7405 | 0.7213 | 0.7608 | 0.8465 |
+
+### Failed Runs (This Execution)
+
+- roberta-base: failed with CUDA out-of-memory on the current GPU setup.
+- prajjwal1/bert-tiny: failed tokenizer backend initialization; requires `sentencepiece` or `tiktoken` in this environment.
 
 ## Relative to DistilBERT Baseline
 
 | Model | F1 Gain vs Base | Train Time Ratio | Params Ratio | Gain per Extra Hour |
 | --- | ---: | ---: | ---: | ---: |
-| roberta-base | +0.0099 | 1.8713x | 1.8691x | 0.3397 |
-| bert-base-uncased | +0.0036 | 1.8549x | 1.6407x | 0.1265 |
+| bert-base-uncased | +0.0039 | 1.8650x | 1.6407x | 0.1344 |
+| huawei-noah/TinyBERT_General_4L_312D | -0.0757 | 0.2728x | 0.2148x | n/a |
+| google/bert_uncased_L-2_H-128_A-2 | -0.2158 | 0.1430x | 0.0659x | n/a |
 
 ## Decision Rule Used
 
@@ -48,17 +70,19 @@ Notebook used: Larger_Transformer_Comparison.ipynb
 
 Outcome from notebook recommendation cell:
 - DistilBERT is the baseline.
-- RoBERTa-base is worth considering under this threshold.
-- BERT-base does not clear the minimum gain threshold.
+- Recommendation: bigger models are not clearly worth it under the current threshold for this run.
+- BERT-base is only +0.0039 over DistilBERT, below the +0.005 threshold.
+- Tiny models that completed are much faster but substantially lower quality.
 
 ## Interpretation
 
-- RoBERTa-base produced the best quality and a meaningful gain over DistilBERT (+0.99 F1 points) while staying under the 2.0x training-time budget.
-- BERT-base improved over DistilBERT, but the gain (+0.36 F1 points) is likely too small for nearly the same compute increase as RoBERTa.
-- DistilBERT remains the strongest efficiency choice when latency and training budget are primary constraints.
+- DistilBERT remains the best quality-efficiency balance in this execution.
+- BERT-base gives the highest measured F1 here, but the gain over DistilBERT is marginal relative to extra cost.
+- TinyBERT and NanoBERT-like are very compute-efficient but lose substantial chunk quality.
 
 ## Recommended Usage
 
-- Use DistilBERT for fast iteration and lower compute budgets.
-- Use RoBERTa-base when you can afford ~1.87x training cost for higher chunking quality.
-- Skip BERT-base in this specific setup unless there are deployment constraints that make it preferable to RoBERTa.
+- Use DistilBERT for default deployment when balancing quality and cost.
+- Use BERT-base only when squeezing small extra quality is worth nearly 1.87x training time.
+- Use TinyBERT or NanoBERT-like only under strict runtime/resource constraints.
+- To complete the frontier cleanly, fix `prajjwal1/bert-tiny` dependencies and rerun `roberta-base` on a larger-memory setup or reduced batch configuration.

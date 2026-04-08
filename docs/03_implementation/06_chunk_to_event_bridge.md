@@ -50,6 +50,12 @@ Records below threshold are marked as abstained.
 - quality-first and latency-first recommendation policy
 - pending models are handled explicitly as `pending_evaluation` (no pipeline break)
 
+Latest scaling sync state (outside the bridge notebook profile cell):
+
+- measured: `google/bert_uncased_L-2_H-128_A-2`, `huawei-noah/TinyBERT_General_4L_312D`
+- failed in latest run: `roberta-base` (CUDA OOM), `prajjwal1/bert-tiny` (tokenizer backend dependency)
+- bridge notebook profile snapshot still needs rerun to ingest those measured tiny-model rows
+
 ### Email Pipeline
 
 - parses multi-line email input
@@ -69,7 +75,7 @@ Records below threshold are marked as abstained.
 
 1. Event scoring is still heuristic and not calibrated on labeled event data.
 2. Cost uses proxy units derived from parameter scale; not yet direct measured latency/token.
-3. Tiny model rows are present but remain pending until training/evaluation is run.
+3. Bridge model-profile cells can lag behind standalone scaling runs unless refreshed.
 
 ## Next Implementation Targets
 

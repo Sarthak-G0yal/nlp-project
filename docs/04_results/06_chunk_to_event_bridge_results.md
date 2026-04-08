@@ -5,6 +5,7 @@ Notebook: `ipynb/Chunk_to_Event_Cost_Aware_Bridge.ipynb`
 ## Scope
 
 This page summarizes the first executed results from the new chunk-to-event bridge implementation.
+It reflects the bridge notebook profile snapshot, which may lag behind the latest standalone scaling notebook run.
 
 ## 1) Model Cost Profile (Current)
 
@@ -19,6 +20,9 @@ Pending rows:
 - google/bert_uncased_L-2_H-128_A-2
 - prajjwal1/bert-tiny
 - huawei-noah/TinyBERT_General_4L_312D
+
+In the latest standalone scaling run (`ipynb/Larger_Transformer_Comparison.ipynb`), NanoBERT-like and TinyBERT now have measured results, while RoBERTa and bert-tiny failed in that environment-specific execution.
+The bridge notebook cost profile should be refreshed to pull those newly measured rows.
 
 ## 2) Recommendation Policy Output
 
@@ -54,7 +58,13 @@ The bridge notebook confirms that:
 2. compute-aware recommendation can be layered on top of chunk-model quality data,
 3. pending-model-aware reporting is working, enabling incremental scaling studies without breaking analysis.
 
-## 5) Next Metrics to Add
+## 5) Sync Note with Latest Scaling Run
+
+- latest scaling measured: distilbert, bert-base-uncased, google/bert_uncased_L-2_H-128_A-2, huawei-noah/TinyBERT_General_4L_312D
+- latest scaling failures: roberta-base (CUDA OOM), prajjwal1/bert-tiny (tokenizer backend dependency)
+- bridge recommendation table still reflects the earlier snapshot until its profile cells are rerun
+
+## 6) Next Metrics to Add
 
 1. measured inference latency/token and memory usage
 2. event-level precision/recall/F1 on labeled event sets

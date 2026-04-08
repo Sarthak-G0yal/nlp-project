@@ -6,7 +6,7 @@ Shallow Parsing for Information Extraction using CoNLL-2000.
 
 ## One-Line Summary
 
-We built and evaluated phrase-level chunking models, from a lightweight POS-feature baseline to a transformer-based token classifier, to study practical information extraction performance.
+I built and evaluated phrase-level chunking models, from a lightweight POS-feature baseline to a transformer-based token classifier, to study practical information extraction performance.
 
 ## Scope
 
