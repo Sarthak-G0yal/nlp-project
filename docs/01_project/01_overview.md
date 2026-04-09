@@ -21,6 +21,12 @@ Output:
 
 ## Main Artifacts
 
-- `Notebook.ipynb`: end-to-end data, modeling, training, and evaluation workflow
+- `ipynb/Notebook.ipynb`: end-to-end data, modeling, training, and evaluation workflow
+- `ipynb/Other_Shallow_Parsing_Baselines.ipynb`: extended non-transformer baseline benchmark
+- `ipynb/Larger_Transformer_Comparison.ipynb`: scaling experiment across compact and larger encoders
+- `ipynb/Domain_Specific_Tokenization_Chunk_Aware_Preprocessing.ipynb`: innovation notebook with retraining gate outputs
+- `ipynb/Shallow_Parsing_IE_Application.ipynb` and `ipynb/Chunk_to_Event_Cost_Aware_Bridge.ipynb`: IE application and event-bridge notebooks
 - `dataset/train.parquet`, `dataset/test.parquet`: prepared CoNLL-2000 data files
 - `outputs/distilbert-conll2000/`: training checkpoints and evaluation artifacts
+- `outputs/domain-tokenization-study/`: persisted CSV summaries for innovation ablations and retraining decisions
+- `libs/chunk_event_dashboard/app.py`: interactive dashboard entry point

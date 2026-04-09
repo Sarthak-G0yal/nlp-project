@@ -1,6 +1,6 @@
 # 2. Problem Statement
 
-## What is Shallow Parsing?
+## What Is Shallow Parsing?
 
 Shallow parsing (chunking) identifies non-overlapping phrase chunks in a sentence without building a full parse tree. Typical chunk types include:
 

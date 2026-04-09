@@ -185,9 +185,32 @@ def split_email_into_sentences(email_text: str) -> List[str]:
     return sentences
 
 
+def _lookup_model_cost_row(model_name: str) -> Optional[Dict]:
+    row = next((candidate for candidate in MODEL_COST_PROFILE if candidate.get("model") == model_name), None)
+    if row is not None:
+        return row
+
+    short_name = str(model_name).split("/")[-1]
+    row = next(
+        (
+            candidate
+            for candidate in MODEL_COST_PROFILE
+            if str(candidate.get("model", "")).split("/")[-1] == short_name
+        ),
+        None,
+    )
+    if row is not None:
+        return row
+
+    if "distilbert" in str(model_name).lower():
+        return next((candidate for candidate in MODEL_COST_PROFILE if candidate.get("model") == "distilbert"), None)
+
+    return None
+
+
 def estimate_event_cost(tokens_processed: int, model_name: str) -> float:
-    base_row = next((row for row in MODEL_COST_PROFILE if row["model"] == "distilbert"), None)
-    model_row = next((row for row in MODEL_COST_PROFILE if row["model"] == model_name), None)
+    base_row = _lookup_model_cost_row("distilbert")
+    model_row = _lookup_model_cost_row(model_name)
     if not base_row or not model_row:
         return float("nan")
 

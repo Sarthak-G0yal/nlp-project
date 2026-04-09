@@ -3,15 +3,15 @@
 ## Scope
 
 This summary combines outcomes from:
-- Notebook.ipynb (baseline logistic regression vs transformer DistilBERT)
-- Other_Shallow_Parsing_Baselines.ipynb (MultinomialNB, LogisticRegression, BiLSTM, optional CRF)
+- ipynb/Notebook.ipynb (baseline logistic regression vs transformer DistilBERT)
+- ipynb/Other_Shallow_Parsing_Baselines.ipynb (MultinomialNB, LogisticRegression, BiLSTM, optional CRF)
 - ipynb/Domain_Specific_Tokenization_Chunk_Aware_Preprocessing.ipynb (domain normalization, alignment-aware scoring, retraining/sweep gate)
 - ipynb/Larger_Transformer_Comparison.ipynb (scaling analysis with expanded model pool)
 - ipynb/Chunk_to_Event_Cost_Aware_Bridge.ipynb (event-bridge + confidence/abstention + cost-aware routing)
 
-## 1) Main Notebook Results
+## Main Notebook Results
 
-### Baseline vs Transformer (core project comparison)
+### Baseline vs Transformer (Core Project Comparison)
 
 - Baseline chunk_f1: 0.6688
 - Transformer chunk_f1: 0.9586
@@ -27,16 +27,16 @@ Interpretation:
 - Contextual transformer modeling dramatically improves chunk boundary quality over sparse local features.
 - The largest practical benefit is the error reduction at chunk level, which is highly relevant for downstream information extraction.
 
-## 2) Other Baselines Notebook Results
+## Other Baselines Notebook Results
 
-### Chunk-level comparison
+### Chunk-Level Comparison
 
 - CRF (optional): precision 0.931, recall 0.930, f1 0.931, accuracy 0.955
 - LogisticRegression: precision 0.885, recall 0.910, f1 0.898, accuracy 0.939
 - MultinomialNB: precision 0.850, recall 0.897, f1 0.873, accuracy 0.917
 - BiLSTM: precision 0.787, recall 0.818, f1 0.803, accuracy 0.888
 
-### Token-level behavior (from extended comparison visuals)
+### Token-Level Behavior (From Extended Comparison Visuals)
 
 - LogisticRegression leads among non-CRF baselines on token metrics.
 - MultinomialNB is competitive but below LogisticRegression.
@@ -47,7 +47,7 @@ Interpretation:
 - CRF is the best method among the non-transformer baseline set in this run.
 - Neural baseline quality is sensitive to training size and hyperparameter tuning.
 
-## 3) Transformer vs Other Baselines (Direct Comparison)
+## Transformer vs Other Baselines (Direct Comparison)
 
 Using DistilBERT chunk_f1 = 0.9586 from the main notebook as reference:
 
@@ -64,17 +64,17 @@ Notes:
 - LogisticRegression remains the best always-available lightweight baseline.
 - BiLSTM under this configuration (subset + current hyperparameters) is clearly below sparse-feature classical baselines.
 
-## 4) Cross-Notebook Takeaways
+## Cross-Notebook Takeaways
 
-1. Best overall in this project: Transformer (Notebook.ipynb).
-2. Best non-transformer baseline: CRF (optional) in Other_Shallow_Parsing_Baselines.ipynb.
+1. Best overall in this project: Transformer (`ipynb/Notebook.ipynb`).
+2. Best non-transformer baseline: CRF (optional) in `ipynb/Other_Shallow_Parsing_Baselines.ipynb`.
 3. Best always-available lightweight baseline: LogisticRegression.
 4. Recommendation for reporting:
    - Use transformer as primary model.
    - Use LogisticRegression and CRF as baseline references.
    - Mention that BiLSTM can improve with larger training data and tuning.
 
-## 5) Suggested Reporting Table
+## Suggested Reporting Table
 
 Include this order in your final report:
 - MultinomialNB
@@ -85,9 +85,9 @@ Include this order in your final report:
 
 This presents a clear progression from simple probabilistic to structured classical to neural transformer methods.
 
-## 6) Scaling Notebook Update (New Models)
+## Scaling Notebook Update (New Models)
 
-### Newly added models in the scaling notebook
+### Newly Added Models in the Scaling Notebook
 
 The model pool in `ipynb/Larger_Transformer_Comparison.ipynb` now includes:
 
@@ -98,7 +98,7 @@ The model pool in `ipynb/Larger_Transformer_Comparison.ipynb` now includes:
 - prajjwal1/bert-tiny
 - huawei-noah/TinyBERT_General_4L_312D
 
-### Current measured vs failed state
+### Current Measured vs Failed State
 
 - Measured in latest scaling execution: DistilBERT, BERT-base, NanoBERT-like, TinyBERT
 - Failed in latest scaling execution:
@@ -117,20 +117,21 @@ Interpretation:
 - Tiny models trade large quality loss for speed/size gains.
 - A clean final comparison still requires successful RoBERTa and bert-tiny reruns in a compatible environment.
 
-## 7) Chunk-to-Event Bridge Results
+## Chunk-to-Event Bridge Results
 
-### What was added
+### What Was Added
 
 - explicit event schema and role requirements
 - confidence + abstention mechanism for event extraction
 - cost-aware model recommendation layer
 - pending-model-safe recommendation tables (for profiles that are not yet synchronized in the bridge snapshot)
 
-### Current executed outputs
+### Current Executed Outputs
 
-- measured model profile includes distilbert, bert-base-uncased, roberta-base
-- bridge notebook currently still shows tiny-model rows as pending (it has not yet been refreshed with the newest scaling execution)
-- recommendation output (current thresholds): roberta-base in both quality-first and latency-first views
+- bridge notebook profile snapshot currently includes measured rows for distilbert, bert-base-uncased, and roberta-base
+- latest standalone scaling execution measured distilbert, bert-base-uncased, google/bert_uncased_L-2_H-128_A-2, and huawei-noah/TinyBERT_General_4L_312D
+- latest standalone scaling execution failed for roberta-base (CUDA OOM) and prajjwal1/bert-tiny (tokenizer backend dependency)
+- snapshot recommendation output still returns roberta-base in both quality-first and latency-first views until bridge profile cells are rerun
 - email pipeline run summary: accepted events 5/5, total cost estimate 38.00, cost per accepted event 7.60
 
 Interpretation:
@@ -139,11 +140,11 @@ Interpretation:
 - The analysis layer can compare extraction quality and compute constraints together.
 - Tiny-model integration is structurally complete; scaling measurements are now available and can be propagated by rerunning bridge/profile cells.
 
-## 8) Domain-Specific Tokenization Innovation Notebook Update
+## Domain-Specific Tokenization Innovation Notebook Update
 
 Notebook: `ipynb/Domain_Specific_Tokenization_Chunk_Aware_Preprocessing.ipynb`
 
-### What was added
+### What Was Added
 
 - deterministic domain normalization rules for emails/URLs/currency/time/date/ID patterns,
 - anti-regression assertions for known normalization failure modes,

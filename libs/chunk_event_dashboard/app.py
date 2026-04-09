@@ -15,7 +15,12 @@ if str(SRC_DIR) not in sys.path:
 
 from chunk_event_dashboard.constants import MODEL_COST_PROFILE
 from chunk_event_dashboard.extraction import extract_event_record, run_email_event_pipeline
-from chunk_event_dashboard.inference import available_model_checkpoints, find_project_root, load_token_classifier
+from chunk_event_dashboard.inference import (
+    available_model_checkpoints,
+    find_project_root,
+    load_token_classifier,
+    read_checkpoint_metrics,
+)
 
 
 st.set_page_config(page_title="Chunk-to-Event Dashboard", page_icon="NLP", layout="wide")
@@ -46,14 +51,98 @@ def streamlit_safe_df(df: pd.DataFrame) -> pd.DataFrame:
     return safe_df
 
 
-def summarize_model_profile() -> pd.DataFrame:
-    df = pd.DataFrame(MODEL_COST_PROFILE)
+def _lookup_profile_row(profile_lookup: dict, model_name: str) -> dict:
+    row = profile_lookup.get(model_name)
+    if row:
+        return row
+
+    short_name = model_name.split("/")[-1]
+    for key, candidate in profile_lookup.items():
+        if str(key).split("/")[-1] == short_name:
+            return candidate
+
+    if "distilbert" in model_name.lower() and "distilbert" in profile_lookup:
+        return profile_lookup["distilbert"]
+
+    return {}
+
+
+def summarize_model_profile(checkpoints: dict) -> pd.DataFrame:
+    profile_lookup = {
+        str(row.get("model")): row
+        for row in MODEL_COST_PROFILE
+        if isinstance(row, dict) and row.get("model")
+    }
+    model_order = list(dict.fromkeys([*checkpoints.keys(), *profile_lookup.keys()]))
+
+    rows = []
+    for model_name in model_order:
+        static_row = _lookup_profile_row(profile_lookup, model_name)
+        checkpoint = checkpoints.get(model_name)
+        measured = read_checkpoint_metrics(checkpoint)
+
+        row = {
+            "model": model_name,
+            "checkpoint_available": checkpoint is not None,
+            "chunk_f1": measured["chunk_f1"] if measured["chunk_f1"] is not None else static_row.get("chunk_f1"),
+            "precision": measured["precision"],
+            "recall": measured["recall"],
+            "accuracy": measured["accuracy"],
+            "train_seconds": measured["train_seconds"]
+            if measured["train_seconds"] is not None
+            else static_row.get("train_seconds"),
+            "params_millions": static_row.get("params_millions"),
+            "status": static_row.get("status", "missing_checkpoint"),
+        }
+
+        if checkpoint is not None and measured["chunk_f1"] is not None:
+            row["status"] = "measured_from_checkpoint"
+        elif checkpoint is not None and row["status"] == "missing_checkpoint":
+            row["status"] = "checkpoint_available"
+
+        rows.append(row)
+
+    df = pd.DataFrame(rows)
     if df.empty:
         return df
-    base = df[df["model"] == "distilbert"].iloc[0]
-    df["f1_gain_vs_base"] = df["chunk_f1"] - float(base["chunk_f1"])
-    df["train_time_ratio_vs_base"] = df["train_seconds"] / float(base["train_seconds"])
-    return df
+
+    df["f1_gain_vs_base"] = np.nan
+    df["train_time_ratio_vs_base"] = np.nan
+
+    base_rows = df[(df["model"] == "distilbert") & df["chunk_f1"].notna()]
+    if base_rows.empty:
+        base_rows = df[df["chunk_f1"].notna()]
+
+    if not base_rows.empty:
+        base = base_rows.iloc[0]
+        base_f1 = float(base["chunk_f1"])
+        df["f1_gain_vs_base"] = pd.to_numeric(df["chunk_f1"], errors="coerce") - base_f1
+
+        base_train = pd.to_numeric(pd.Series([base["train_seconds"]]), errors="coerce").iloc[0]
+        if pd.notna(base_train) and base_train > 0:
+            df["train_time_ratio_vs_base"] = pd.to_numeric(df["train_seconds"], errors="coerce") / float(base_train)
+
+    return df.sort_values(["checkpoint_available", "chunk_f1"], ascending=[False, False], na_position="last")
+
+
+def _profile_status_lookup() -> dict:
+    return {
+        str(row.get("model")): str(row.get("status"))
+        for row in MODEL_COST_PROFILE
+        if isinstance(row, dict) and row.get("model")
+    }
+
+
+def _profile_status_for_model(status_lookup: dict, model_name: str) -> str:
+    if model_name in status_lookup:
+        return status_lookup[model_name]
+
+    short_name = model_name.split("/")[-1]
+    for key, value in status_lookup.items():
+        if str(key).split("/")[-1] == short_name:
+            return value
+
+    return "unknown"
 
 
 project_root = find_project_root(APP_DIR)
@@ -85,19 +174,33 @@ st.caption(f"Loaded checkpoint: {checkpoint_path}")
 left, right = st.columns([2, 1])
 
 with right:
-    status_rows = [
-        {
-            "model": model,
-            "checkpoint_available": checkpoints[model] is not None,
-            "checkpoint": str(checkpoints[model]) if checkpoints[model] else "missing",
-        }
-        for model in checkpoints
-    ]
+    profile_status_lookup = _profile_status_lookup()
+    status_rows = []
+    for model, checkpoint in checkpoints.items():
+        profile_status = _profile_status_for_model(profile_status_lookup, model)
+        measured = read_checkpoint_metrics(checkpoint)
+
+        row_status = profile_status
+        if checkpoint is not None and measured["chunk_f1"] is not None:
+            row_status = "measured_from_checkpoint"
+
+        checkpoint_label = str(checkpoint)
+        if checkpoint is None:
+            checkpoint_label = "pending_evaluation" if profile_status == "pending_evaluation" else "missing"
+
+        status_rows.append(
+            {
+                "model": model,
+                "checkpoint_available": checkpoint is not None,
+                "checkpoint": checkpoint_label,
+                "status": row_status,
+            }
+        )
     st.subheader("Checkpoint Status")
     st.dataframe(streamlit_safe_df(pd.DataFrame(status_rows)), height=260)
 
     st.subheader("Model Cost Profile")
-    profile_df = summarize_model_profile()
+    profile_df = summarize_model_profile(checkpoints)
     st.dataframe(streamlit_safe_df(profile_df), height=260)
 
 with left:

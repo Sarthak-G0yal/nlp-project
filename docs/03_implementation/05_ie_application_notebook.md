@@ -1,6 +1,6 @@
 # 17. IE Application Notebook
 
-Notebook: `Shallow_Parsing_IE_Application.ipynb`
+Notebook: `ipynb/Shallow_Parsing_IE_Application.ipynb`
 
 ## Purpose
 
@@ -68,7 +68,7 @@ the notebook can produce a structured IE view with chunk-based labels and fields
 - object: `a major acquisition`
 - prep_phrases: `in Europe`
 
-## New: Paste-Email Event Pipeline
+## Paste-Email Event Pipeline
 
 The notebook now includes a dedicated section that lets you paste an email body and extract structured event rows.
 
@@ -100,12 +100,14 @@ The extracted DataFrame includes:
 - `time`
 - `num_chunks`
 
-### Typical Use
+### Operational Use Pattern
 
-1. Open `Shallow_Parsing_IE_Application.ipynb`.
-2. Go to the email extraction section.
-3. Replace the sample `email_text` with your own email content.
-4. Run the cell to get structured event records ready for downstream triage, alerts, or reporting.
+The standard project execution pattern is:
+
+1. open `ipynb/Shallow_Parsing_IE_Application.ipynb`,
+2. move to the email extraction section,
+3. replace the sample `email_text` with a target email body,
+4. execute the extraction cell to produce structured event records for downstream triage, alerts, or reporting.
 
 ## Limitations
 

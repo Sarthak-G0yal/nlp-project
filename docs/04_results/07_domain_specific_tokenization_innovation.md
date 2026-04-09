@@ -1,6 +1,6 @@
 # Domain-Specific Tokenization Innovation Results
 
-Notebook: ipynb/Domain_Specific_Tokenization_Chunk_Aware_Preprocessing.ipynb
+Notebook: `ipynb/Domain_Specific_Tokenization_Chunk_Aware_Preprocessing.ipynb`
 
 ## Objective
 
@@ -15,7 +15,7 @@ The notebook focused on:
 
 ## What Was Innovative
 
-### 1) Domain normalization layer
+### Domain Normalization Layer
 
 Implemented canonicalization rules for:
 
@@ -28,7 +28,7 @@ Implemented canonicalization rules for:
 
 Also added assertion checks to prevent prior false positives (for example, common words being mis-tagged as IDs and decimals being interpreted as times).
 
-### 2) Alignment-aware scoring
+### Alignment-Aware Scoring
 
 Replaced strict token-count evaluability with token-text alignment coverage.
 
@@ -37,14 +37,14 @@ Impact:
 - evaluable coverage increased from low strict-length behavior to high usable coverage,
 - metrics are now computed on much larger aligned subsets, improving confidence in comparisons.
 
-### 3) Decision-gated retraining workflow
+### Decision-Gated Retraining Workflow
 
 Added a rule-driven gate:
 
 - if inference-time gains remain near zero, trigger retraining,
 - require at least +0.005 chunk F1 vs baseline before deployment recommendation.
 
-### 4) Iterative retraining sweep
+### Iterative Retraining Sweep
 
 Added multi-configuration sweep logic with early stop on threshold success.
 
@@ -81,14 +81,14 @@ Reason emitted by notebook:
 
 ## Retraining and Sweep Outcomes
 
-### Single retrain run
+### Single Retrain Run
 
 From outputs/domain-tokenization-study/retrain_metrics.csv:
 
 - eval_f1: 0.8823
 - this underperformed baseline significantly.
 
-### Iterative sweep
+### Iterative Sweep
 
 From outputs/domain-tokenization-study/retrain_sweep.csv:
 
@@ -100,7 +100,7 @@ From outputs/domain-tokenization-study/retrain_sweep.csv:
 
 Best sweep candidate improved over baseline, but not enough to pass deployment threshold (+0.005).
 
-### Final retrain comparison
+### Final Retrain Comparison
 
 From outputs/domain-tokenization-study/retrain_comparison.csv:
 

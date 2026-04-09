@@ -21,16 +21,16 @@ It is implemented as a separate library folder under `libs/` and managed through
   - confidence and abstention fields
   - cost proxy summary and CSV download
 
-## Run Commands
+## Deployment Commands
 
-### From repository root
+### From Repository Root
 
 ```bash
 uv sync
 uv run streamlit run libs/chunk_event_dashboard/app.py --global.dataFrameSerialization legacy
 ```
 
-### From dashboard folder
+### From Dashboard Folder
 
 ```bash
 cd libs/chunk_event_dashboard
@@ -52,12 +52,12 @@ The current stack includes Streamlit 1.19 with newer pandas/pyarrow versions. Tw
 
 ## Main Library Files
 
-- `libs/chunk_event_dashboard/src/chunk_event_dashboard/constants.py`
-- `libs/chunk_event_dashboard/src/chunk_event_dashboard/inference.py`
-- `libs/chunk_event_dashboard/src/chunk_event_dashboard/extraction.py`
-- `libs/chunk_event_dashboard/app.py`
+- `libs/chunk_event_dashboard/src/chunk_event_dashboard/constants.py`: event labels, dashboard defaults, and display constants
+- `libs/chunk_event_dashboard/src/chunk_event_dashboard/inference.py`: checkpoint discovery and token-classification inference helpers
+- `libs/chunk_event_dashboard/src/chunk_event_dashboard/extraction.py`: chunk-span to event-record conversion and cost proxy helpers
+- `libs/chunk_event_dashboard/app.py`: Streamlit entrypoint and UI orchestration
 
-## Troubleshooting
+## Compatibility Recovery Steps
 
 If an old error still appears after code updates:
 

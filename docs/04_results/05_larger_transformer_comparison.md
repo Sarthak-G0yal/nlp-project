@@ -4,7 +4,7 @@
 
 This experiment measured whether moving from a compact transformer (DistilBERT) to larger encoders (BERT-base, RoBERTa-base) provides enough chunking quality gain to justify extra training cost, while also testing compact tiny-model candidates.
 
-Notebook used: Larger_Transformer_Comparison.ipynb
+Notebook used: `ipynb/Larger_Transformer_Comparison.ipynb`
 
 ## What I Did
 

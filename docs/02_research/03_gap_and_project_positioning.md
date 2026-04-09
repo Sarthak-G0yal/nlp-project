@@ -2,7 +2,7 @@
 
 ## Gap
 
-Many tutorials either:
+Many public walkthroughs either:
 
 - show only a simple baseline without modern transformer training, or
 - show only transformer training without baseline comparison and careful error analysis.

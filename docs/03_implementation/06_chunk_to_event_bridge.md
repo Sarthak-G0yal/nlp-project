@@ -54,7 +54,7 @@ Latest scaling sync state (outside the bridge notebook profile cell):
 
 - measured: `google/bert_uncased_L-2_H-128_A-2`, `huawei-noah/TinyBERT_General_4L_312D`
 - failed in latest run: `roberta-base` (CUDA OOM), `prajjwal1/bert-tiny` (tokenizer backend dependency)
-- bridge notebook profile snapshot still needs rerun to ingest those measured tiny-model rows
+- bridge notebook profile snapshot still contains an older measured `roberta-base` row and pending tiny-model rows until those profile cells are rerun
 
 ### Email Pipeline
 

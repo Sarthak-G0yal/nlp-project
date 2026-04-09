@@ -2,20 +2,22 @@
 
 Detailed project documentation is available in `docs/README.md`.
 
-This project builds a complete shallow parsing (chunking) pipeline using the CoNLL-2000 dataset from `dataset/train.parquet` and `dataset/test.parquet`.
+This repository contains an end-to-end shallow parsing (chunking) project using CoNLL-2000 data from `dataset/train.parquet` and `dataset/test.parquet`.
 
-The notebook covers:
-- dataset inspection and BIO chunk decoding
-- exploratory analysis of chunk distribution
-- a lightweight baseline (POS-based token classifier)
-- a modern transformer token-classification setup for chunking
-- detailed error analysis for information extraction quality
+Core project artifacts include:
 
-## 1) Problem Statement
+- `ipynb/Notebook.ipynb`: main baseline-vs-transformer workflow
+- `ipynb/Other_Shallow_Parsing_Baselines.ipynb`: additional baseline comparison set (CRF, MultinomialNB, LogisticRegression, BiLSTM)
+- `ipynb/Larger_Transformer_Comparison.ipynb`: scaling study across compact and larger encoders
+- `ipynb/Domain_Specific_Tokenization_Chunk_Aware_Preprocessing.ipynb`: domain-aware preprocessing and retraining gate
+- `ipynb/Shallow_Parsing_IE_Application.ipynb`: chunk-to-IE application flow
+- `ipynb/Chunk_to_Event_Cost_Aware_Bridge.ipynb`: confidence-aware event bridge and cost policy layer
+
+## Problem Statement
 
 Shallow parsing (text chunking) segments a sentence into non-overlapping phrase chunks such as NP, VP, and PP. In information extraction, chunking provides phrase boundaries that improve downstream extraction quality and interpretability.
 
-## 2) What Is Latest In This Field
+## What Is Latest In This Field
 
 Recent progress in shallow parsing and closely related sequence labeling has followed these trends:
 
@@ -23,7 +25,7 @@ Recent progress in shallow parsing and closely related sequence labeling has fol
 	Fine-tuning pretrained encoders (for example BERT/DistilBERT/DeBERTa-family) with BIO/BIOES labels is now standard practice for chunking-like tasks.
 
 - Improved sequence modeling heads over plain linear-chain CRF:
-	Locally-Contextual Nonlinear CRFs (Shah et al., 2021) report improvements on sequence labeling and specifically strong CoNLL-2000 chunking performance compared with earlier CRF heads.
+	Locally-Contextual Nonlinear CRFs (Shah et al., 2021) report improvements in sequence labeling and specifically strong CoNLL-2000 chunking performance compared with earlier CRF heads.
 
 - Span-centric formulations:
 	Modern libraries and models increasingly use span-aware methods for token classification and extraction, often improving robustness on boundary decisions.
@@ -39,60 +41,49 @@ Reference points:
 - Locally-Contextual Nonlinear CRFs for Sequence Labeling (arXiv:2103.16210)
 - Hugging Face token-classification training recipe (current practical standard)
 
-## 3) Notebook Workflow
+## Outputs and Experiment Artifacts
 
-The notebook is organized into phases:
+Current outputs are organized under `outputs/`:
 
-1. Load parquet files and validate schema (`id`, `tokens`, `pos_tags`, `chunk_tags`).
-2. Decode numeric POS/chunk IDs to readable labels.
-3. Run EDA and inspect class imbalance.
-4. Train a POS-only baseline using scikit-learn.
-5. Prepare Hugging Face dataset objects for transformer fine-tuning.
-6. Define and train a token-classification model with seqeval metrics.
-7. Evaluate and perform error analysis by chunk type.
+- `outputs/distilbert-conll2000/`: primary model checkpoints
+- `outputs/scale-study-bert-base-uncased/`, `outputs/scale-study-distilbert-base-uncased/`, `outputs/scale-study-roberta-base/`: scaling comparison checkpoints
+- `outputs/domain-tokenization-study/`: innovation-study CSV artifacts (`ablation_metrics.csv`, `decision_gate.csv`, `retrain_sweep.csv`, and related analysis tables)
+- `outputs/domain-tokenization-retrain-distilbert/` and `outputs/domain-tokenization-retrain-sweep/`: retraining trial checkpoints
 
-## 4) Dependencies You Need To Install
+## Environment and Dependencies
 
-Current environment already has `pandas`, `numpy`, and parquet support.
+The project environment is managed with `uv`.
 
-Please install these additional packages for full notebook execution:
+- dependency specification: `pyproject.toml`
+- lockfile: `uv.lock`
+- compatibility export: `requirements.txt`
 
-- `scikit-learn`
-- `datasets`
-- `transformers`
-- `evaluate`
-- `seqeval`
-- `torch`
-- `matplotlib`
-- `seaborn`
-- `tqdm`
-
-Suggested install command (if you want):
+Reproducible environment sync:
 
 ```bash
-uv add scikit-learn datasets transformers evaluate seqeval torch matplotlib seaborn tqdm
+uv sync
 ```
 
-## 5) Expected Deliverables
+## Expected Deliverables
 
 - Reproducible training/evaluation notebook
 - Baseline and transformer model comparison (Precision/Recall/F1)
 - Error slices by chunk class (for example NP vs VP boundaries)
 - Project summary on practical IE takeaways from shallow parsing
 
-## 6) Streamlit Dashboard (Separate Library)
+## Streamlit Dashboard (Separate Library)
 
 An interactive dashboard is available in:
 
 - `libs/chunk_event_dashboard/app.py`
 
-It supports:
+The dashboard provides:
 
 - model checkpoint selection from local `outputs/`
 - single text chunk-to-event extraction
 - email event pipeline with confidence and cost summary
 
-Run from repository root:
+To deploy from the repository root:
 
 ```bash
 uv sync
@@ -104,8 +95,8 @@ For implementation details and troubleshooting, see:
 - `docs/03_implementation/07_streamlit_dashboard.md`
 
 
-## Next Steps:
-- compare models that are used till now ( baseline and all transformer) compare on all metrics.
-- Implement other models or methods.
-- implement a application of shallow pharsing for IE etc.
-- use even bigger transformer model and see if the extra compute justify the gains
+## Next Steps
+- compare currently evaluated baselines and transformer models across all metrics.
+- expand model families and optimization settings for stronger scaling conclusions.
+- continue improving shallow parsing IE application quality and event extraction reliability.
+- evaluate whether larger transformer compute cost is justified by measurable gains.
